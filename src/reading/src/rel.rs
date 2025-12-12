@@ -8,13 +8,13 @@ use timely::dataflow::ScopeParent;
 use timely::order::TotalOrder;
 use timely::progress::timestamp::Refines;
 
+use differential_dataflow::collection::VecCollection;
 use differential_dataflow::lattice::Lattice;
 use differential_dataflow::operators::arrange::ArrangeByKey;
 use differential_dataflow::operators::arrange::ArrangeBySelf;
 use differential_dataflow::operators::iterate::SemigroupVariable;
 use differential_dataflow::operators::ThresholdTotal;
 use differential_dataflow::AsCollection;
-use differential_dataflow::Collection;
 use differential_dataflow::Data;
 
 use crate::arrangements::ArrangedDict;
@@ -76,18 +76,18 @@ macro_rules! impl_rels {
                 G::Timestamp: Data+Lattice+TotalOrder,
             {
                 $(
-                    [<Collection $arity>](Collection<G, Row<$arity>, Semiring>),
-                    [<Variable $arity>](SemigroupVariable<G, Row<$arity>, Semiring>),
+                    [<Collection $arity>](VecCollection<G, Row<$arity>, Semiring>),
+                    [<Variable $arity>](SemigroupVariable<G, Vec<(Row<$arity>, <G as ScopeParent>::Timestamp, Semiring)>>),
                 )*
                 // fallback for large arities that store true arity
-                CollectionFat(Collection<G, FatRow, Semiring>, usize),
-                VariableFat(SemigroupVariable<G, FatRow, Semiring>, usize),
+                CollectionFat(VecCollection<G, FatRow, Semiring>, usize),
+                VariableFat(SemigroupVariable<G, Vec<(FatRow, <G as ScopeParent>::Timestamp, Semiring)>>, usize),
             }
 
             impl<G: Scope> Rel<G>
             where
                 G: timely::dataflow::scopes::Scope,
-                G::Timestamp: Data+Lattice+TotalOrder,
+                G::Timestamp: Data + Lattice + TotalOrder,
             {
                 pub fn arity(&self) -> usize {
                     match self {
@@ -108,7 +108,7 @@ macro_rules! impl_rels {
 
                 $(
                     // deref for rel_1, rel_2, ...,
-                    pub fn [<rel_ $arity>](&self) -> &Collection<G, Row<$arity>, Semiring> {
+                    pub fn [<rel_ $arity>](&self) -> &VecCollection<G, Row<$arity>, Semiring> {
                         match self {
                             Rel::[<Collection $arity>](rel) => rel,
                             Rel::[<Variable $arity>](var) => &*var,
@@ -118,7 +118,7 @@ macro_rules! impl_rels {
                 )*
 
                 // deref for Fat rel
-                pub fn rel_fat(&self) -> &Collection<G, FatRow, Semiring> {
+                pub fn rel_fat(&self) -> &VecCollection<G, FatRow, Semiring> {
                     match self {
                         Rel::CollectionFat(rel, _) => rel,
                         Rel::VariableFat(var, _) => &*var,
@@ -461,9 +461,9 @@ macro_rules! impl_double_rels {
                 G::Timestamp: Data+Lattice+TotalOrder,
             {
                 $(
-                    [<DoubleRel $K _ $V>](Collection<G, (Row<$K>, Row<$V>), Semiring>),
+                    [<DoubleRel $K _ $V>](VecCollection<G, (Row<$K>, Row<$V>), Semiring>),
                 )*
-                DoubleRelFat(Collection<G, (FatRow, FatRow), Semiring>, usize, usize), // (collection, key_arity, value_arity)
+                DoubleRelFat(VecCollection<G, (FatRow, FatRow), Semiring>, usize, usize), // (collection, key_arity, value_arity)
             }
 
             impl<G: Scope> DoubleRel<G>
@@ -525,7 +525,7 @@ macro_rules! impl_double_rels {
 
                 $(
                     // rel_1_1, rel_1_2, ...,
-                    pub fn [<rel_ $K _ $V>](&self) -> &Collection<G, (Row<$K>, Row<$V>), Semiring> {
+                    pub fn [<rel_ $K _ $V>](&self) -> &VecCollection<G, (Row<$K>, Row<$V>), Semiring> {
                         match self {
                             DoubleRel::[<DoubleRel $K _ $V>](rel) => rel,
                             _ => panic!("panic access to rel of arity ({}, {})", $K, $V),
@@ -534,7 +534,7 @@ macro_rules! impl_double_rels {
                 )*
 
                 // fat accessor
-                pub fn rel_fat(&self) -> &Collection<G, (FatRow, FatRow), Semiring> {
+                pub fn rel_fat(&self) -> &VecCollection<G, (FatRow, FatRow), Semiring> {
                     match self {
                         DoubleRel::DoubleRelFat(rel, _, _) => rel,
                         _ => panic!("panic access to fat rel from non-fat DoubleRel"),
