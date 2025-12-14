@@ -238,7 +238,7 @@ macro_rules! generate_construct_var {
                 match arity {
                     $(
                         $n => paste::paste! {
-                            Rel::[<Variable $n>](SemigroupVariable::<_, Row<$n>, Semiring>::new(scope, Product::new(Default::default(), 1)))
+                            Rel::[<Variable $n>](SemigroupVariable::<_, Vec<(Row<$n>, Product<Time, Iter>, Semiring)>>::new(scope, Product::new(Default::default(), 1)))
                         },
                     )*
                     _ => unreachable!("arity {} should be handled by match arms if <= MAX_ROW_ARITY", arity),
@@ -246,7 +246,7 @@ macro_rules! generate_construct_var {
             } else {
                 // fat mode
                 Rel::VariableFat(
-                    SemigroupVariable::<_, FatRow, Semiring>::new(scope, Product::new(Default::default(), 1)),
+                    SemigroupVariable::<_, Vec<(FatRow, Product<Time, Iter>, Semiring)>>::new(scope, Product::new(Default::default(), 1)),
                     arity
                 )
             }

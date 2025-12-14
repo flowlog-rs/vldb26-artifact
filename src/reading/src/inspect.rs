@@ -3,11 +3,11 @@
  * -----------------------------------------------------------------------------------------------
  */
 // use differential_dataflow::difference::Abelian;
-use differential_dataflow::collection::AsCollection;
+use differential_dataflow::collection::{AsCollection, VecCollection};
 use differential_dataflow::difference::Semigroup;
 use differential_dataflow::lattice::Lattice;
 use differential_dataflow::operators::threshold::ThresholdTotal;
-use differential_dataflow::{Collection, ExchangeData, Hashable};
+use differential_dataflow::{ExchangeData, Hashable};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fs::{read_to_string, remove_file, File};
@@ -52,7 +52,7 @@ fn get_file_handle(path: &str) -> Arc<Mutex<File>> {
 }
 
 /// Prints the size of a relation (number of tuples)
-fn printsize<G, D, R>(rel: &Collection<G, D, R>, name: &str, is_recursive: bool)
+fn printsize<G, D, R>(rel: &VecCollection<G, D, R>, name: &str, is_recursive: bool)
 where
     G: Scope,
     G::Timestamp: Lattice + TotalOrder,
@@ -79,7 +79,7 @@ where
 }
 
 /// Prints the content of a relation (all tuples)
-fn print<G, D, R>(rel: &Collection<G, D, R>, name: &str)
+fn print<G, D, R>(rel: &VecCollection<G, D, R>, name: &str)
 where
     G: Scope,
     G::Timestamp: Lattice + TotalOrder,
@@ -100,7 +100,7 @@ where
 }
 
 /// Write relation size
-fn writesize<G, D, R>(rel: &Collection<G, D, R>, name: &str, file_path: &str)
+fn writesize<G, D, R>(rel: &VecCollection<G, D, R>, name: &str, file_path: &str)
 where
     G: Scope,
     G::Timestamp: Lattice + TotalOrder,
@@ -131,7 +131,7 @@ where
 }
 
 /// Flush relation data to a file
-fn write<G, D, R>(rel: &Collection<G, D, R>, file_path: &str, worker_id: usize)
+fn write<G, D, R>(rel: &VecCollection<G, D, R>, file_path: &str, worker_id: usize)
 where
     G: Scope,
     G::Timestamp: Lattice + TotalOrder,
