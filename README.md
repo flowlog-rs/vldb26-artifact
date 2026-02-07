@@ -8,18 +8,18 @@
   <strong>An efficient, scalable, and extensible Datalog engine built atop Differential Dataflow</strong>
 </p>
 
----
-
-## Archive Notice
-
-This repository is a public archive. Active development and maintenance have moved to [this repo](https://github.com/flowlog-rs/FlowLog).
-
 <p align="center">
   <a href="https://arxiv.org/pdf/2511.00865">Paper</a> •
   <a href="#quick-example">Quick Start</a> •
   <a href="#datasets">Datasets</a> •
   <a href="#reproducing-paper-figures">Reproduce Results</a>
 </p>
+
+---
+
+## Archive Notice
+
+This repository is a public archive. Active development and maintenance have moved to [this repo](https://github.com/flowlog-rs/FlowLog).
 
 ---
 
