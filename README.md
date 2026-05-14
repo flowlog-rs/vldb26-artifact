@@ -103,7 +103,7 @@ Reach(y) :- Reach(x), Arc(x, y).
 
 ### Prepare Input Data
 
-Create a directory called `reach` and place the EDB files inside. For this example, you can use [livejournal](https://pages.cs.wisc.edu/~m0riarty/dataset/csv/livejournal.zip):
+Create a directory called `reach` and place the EDB files inside. For this example, you can use [livejournal](https://huggingface.co/datasets/NemoYuu/flowlog_benchmark/blob/main/dataset/csv/livejournal.zip):
 
 ```bash
 mkdir -p reach
@@ -217,7 +217,7 @@ RUST_LOG=debug target/release/executing -p examples/batik.dl -f batik -c results
 
 All datasets used in the paper evaluation are publicly available:
 
-**Paper Datasets**: [https://pages.cs.wisc.edu/~m0riarty/dataset/csv/](https://pages.cs.wisc.edu/~m0riarty/dataset/csv/)
+**Paper Datasets**: [https://huggingface.co/datasets/NemoYuu/flowlog_benchmark/tree/main/dataset/csv](https://huggingface.co/datasets/NemoYuu/flowlog_benchmark/tree/main/dataset/csv)
 
 ---
 
